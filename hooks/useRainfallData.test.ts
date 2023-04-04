@@ -1,3 +1,4 @@
+import { RainfallTableData } from '../types/rainfall';
 import { prepareTableData } from './useRainfallData';
 
 test('prepareTableData should transform rainfall data correctly', () => {
@@ -9,35 +10,35 @@ test('prepareTableData should transform rainfall data correctly', () => {
 
   const testData = [
     {
-      date: "2023-01-10T21:15:00.000Z",
+      date: '2023-01-10T21:15:00.000Z',
       data: [
         {
-          regionName: "France",
+          regionName: 'France',
           value: 9,
         },
         {
-          regionName: "Spain",
+          regionName: 'Spain',
           value: 8,
         },
         {
-          regionName: "Norway",
+          regionName: 'Norway',
           value: 3,
         },
       ],
     },
     {
-      date: "2023-01-11T21:15:00.000Z",
+      date: '2023-01-11T21:15:00.000Z',
       data: [
         {
-          regionName: "France",
+          regionName: 'France',
           value: 14,
         },
         {
-          regionName: "Spain",
+          regionName: 'Spain',
           value: 12,
         },
         {
-          regionName: "Norway",
+          regionName: 'Norway',
           value: 9,
         },
       ],
@@ -46,12 +47,19 @@ test('prepareTableData should transform rainfall data correctly', () => {
 
   // the expected format should include a header with dates in the locale format
   // followed by a row for each region
-  const expectedResult = [
-    [ 'Region', '01/10/2023', '01/11/2023' ],
-    [ 'France', '9', '14' ],
-    [ 'Spain', '8', '12' ],
-    [ 'Norway', '3', '9' ]
-  ];
+  const expectedResult: RainfallTableData = {
+    count: 6,
+    regions: ['France', 'Spain', 'Norway'],
+    table: [
+      ['Region', '1/10/2023', '1/11/2023'],
+      ['France', '9', '14'],
+      ['Spain', '8', '12'],
+      ['Norway', '3', '9'],
+    ],
+    totalRainfall: 55,
+    consecutiveDaysOver10mm: 0,
+  };
+
 
   const result = prepareTableData(testData);
   expect(result).toEqual(expectedResult);
