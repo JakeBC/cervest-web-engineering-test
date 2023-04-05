@@ -12,7 +12,7 @@ export type Props = {
   handleChange: (value: string) => void;
 };
 
-const SelectList = ({ value = 'France', options, label, handleChange }: Props) => {
+const SelectList = ({ value, options, label, handleChange }: Props) => {
   const id = useId();
   const onChange = (event: SelectChangeEvent) => {
     handleChange(event.target.value as string);
