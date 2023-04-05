@@ -1,21 +1,30 @@
 import { useMemo } from 'react';
 import useSWR, { Fetcher } from 'swr';
-import { RainfallData, RainfallItem, RainfallTableData, RegionValue } from '../types/rainfall';
+import { RainfallData, RainfallTableData } from '../types/rainfall';
 
 /**
  * Fetcher function for use with swr
  * @param url 
- * @returns Promise<any>
+ * @returns a promise which will resolve response json body
  */
 const fetcher: Fetcher<any> = (url: string) => fetch(url).then(res => res.json());
 
-const filterRainfallData = (data: RainfallData, region: string) => {
-  const applyRegionFilter = (item: RainfallItem) => ({
-    ...item,
-    data: item.data.filter((data: RegionValue) => data.regionName === region),
-  });
+/**
+ * Find the maximum consecutive days where rainfall exceeded 10mm
+ * @param dailyRainfallTotals 
+ * @returns a number representing the longest consecutive days where rainfall exceeded 10mm
+ */
+const calculateMaxConsecutiveDays = (dailyRainfallTotals: number[]) => {
+  let currentCount = 0;
 
-  return data.map(applyRegionFilter);
+  const testFunction = (value: number) => {
+    currentCount = value > 10 ? currentCount + 1 : 0;
+    return value > 10 ? currentCount : 0;
+  }
+
+  const consecutiveDays = dailyRainfallTotals.map(testFunction);
+
+  return Math.max(...consecutiveDays);
 };
 
 /**
@@ -24,46 +33,70 @@ const filterRainfallData = (data: RainfallData, region: string) => {
  * @param regionFilter
  * @returns rainfall data for table display along with rainfall summary data
  */
-export const prepareTableData = (rainfall: RainfallData = [], regionFilter?: string) => {
+export const prepareTableData = (rainfall: RainfallData = [], regionFilter?: string): RainfallTableData => {
   const dates = rainfall.map((item) => new Date(item.date).toLocaleDateString());
   const tableHeader = ['Region', ...dates];
-
-  const allTableData: RainfallTableData = {
-    table: [tableHeader],
-    regions: [],
-    totalRainfall: 0,
-    consecutiveDaysOver10mm: 0,
-    count: 0,
-  };
+  const table = [tableHeader];
+  const regions: string[] = [];
+  const dailyRainfallTotals: number[] = [];
+  let totalRainfall = 0;
+  let count = 0;
 
   const tableData = rainfall.reduce((col, item, columnIndex) => {
-    item.data.forEach(({ regionName, value }, rowIndex) => {
-      // for the first date populate a regions list and the first column of the table
+    let dailyTotalRainfall = 0;
+
+    item.data.forEach(({ regionName, value }) => {
+      // collect a list of all of the represented regions
       if (columnIndex === 0) {
-        col.table.push([regionName]);
-        col.regions.push(regionName);
+        regions.push(regionName);
+      }
+
+      // do not continue where a region filter is provided and the current
+      // region does not match that filter
+      if (regionFilter && regionFilter !== regionName) {
+        return;
+      }
+
+      // for the first column init a new array which will hold rainfall data as a table row
+      // the first cell in the row will be the region name
+      if (columnIndex === 0) {
+        col.push([regionName]);
       }
 
       // push rainfall values into each table region row
-      col.table[rowIndex+1].push(value.toString());
+      const regionRow = col.find((row) => row.includes(regionName));
+      regionRow?.push(value.toString());
       
       // increment the total rainfall value
-      col.totalRainfall += value;
+      totalRainfall += value;
+
+      // increment the daily rainfall value
+      dailyTotalRainfall += value;
 
       // count the number of rainfall values
-      col.count += 1;
+      count += 1;
     });
 
-    return col;
-  }, allTableData);
+    // persist an array of daily total rainfall in order to look for trends
+    dailyRainfallTotals.push(dailyTotalRainfall);
 
-  return tableData;
+    return col;
+  }, table);
+
+  return {
+    table,
+    regions,
+    totalRainfall,
+    averageRainfall: Math.round(totalRainfall / count) || 0,
+    consecutiveDaysOver10mm: calculateMaxConsecutiveDays(dailyRainfallTotals),
+  };
 };
 
 /**
  * Fetches rainfall data and returns that in a format suitable for tabular display.
  * Dates in columns, regions in rows.
- * @param region 
+ * @param regionFilter
+ * @returns the data required to populate the rainfall data table and summary information
  */
 const useRainfallData = (regionFilter?: string) => {
   const { data } = useSWR<RainfallData>('/api/rainfall', fetcher);

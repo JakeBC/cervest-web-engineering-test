@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
 import { SelectChangeEvent } from '@mui/material';
 
 import styles from '@/styles/Home.module.css'
@@ -8,15 +7,13 @@ import RainfallTable from '@/components/table'
 import SelectList from '@/components/select';
 import useRainfallData from '@/hooks/useRainfallData';
 
-const inter = Inter({ subsets: ['latin'] })
-
 const Home = () => {
   const [selectedRegion, setSelectedRegion] = useState('');
   const handleRegionChange = (event: SelectChangeEvent) => {
     setSelectedRegion(event.target.value as string);
   };
 
-  const {table, regions, totalRainfall, count} = useRainfallData();
+  const {table, regions, totalRainfall, averageRainfall, consecutiveDaysOver10mm} = useRainfallData(selectedRegion);
   const [tableHeader, ...tableRows] = table;
   const summaryHeader = [
     'Total rainfall',
@@ -24,7 +21,7 @@ const Home = () => {
     'Number of consecutive days where rainfall exceeds 10mm',
   ];
   const summaryRows = [
-    [totalRainfall, Math.round(totalRainfall / count) || 0, 0],
+    [totalRainfall, averageRainfall, consecutiveDaysOver10mm],
   ];
 
   return (

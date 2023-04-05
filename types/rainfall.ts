@@ -14,7 +14,7 @@ export type RainfallTableData = {
   table: string[][];
   regions: string[];
   totalRainfall: number;
+  averageRainfall: number;
   consecutiveDaysOver10mm: number;
-  count: number;
 };
 
