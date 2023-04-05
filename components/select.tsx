@@ -5,15 +5,18 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-type Props = {
+export type Props = {
   value: string;
   options: string[];
   label: string;
-  handleChange: (event: SelectChangeEvent) => void;
+  handleChange: (value: string) => void;
 };
 
 const SelectList = ({ value = 'France', options, label, handleChange }: Props) => {
   const id = useId();
+  const onChange = (event: SelectChangeEvent) => {
+    handleChange(event.target.value as string);
+  }
 
   return (
     <FormControl>
@@ -22,7 +25,7 @@ const SelectList = ({ value = 'France', options, label, handleChange }: Props) =
         id={id}
         value={value}
         label={label}
-        onChange={handleChange}
+        onChange={onChange}
       >
         <MenuItem value="">-</MenuItem>
         { options.map((option) => <MenuItem key={option} value={option}>{option}</MenuItem>)}
