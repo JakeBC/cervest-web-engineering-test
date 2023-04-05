@@ -21,7 +21,7 @@ test('SelectList should render an accessible select element', async () => {
    */
   
   const props = createProps();
-  const { container } = render(<SelectList {...props} />);
+  render(<SelectList {...props} />);
 
   const user = userEvent.setup();
   const button = screen.getByRole('button', { name: 'greeting' });
