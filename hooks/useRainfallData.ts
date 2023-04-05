@@ -23,8 +23,9 @@ const calculateMaxConsecutiveDays = (dailyRainfallTotals: number[]) => {
   }
 
   const consecutiveDays = dailyRainfallTotals.map(testFunction);
+  const maxConsecutiveDays = Math.max(...consecutiveDays);
 
-  return Math.max(...consecutiveDays);
+  return Number.isFinite(maxConsecutiveDays) ? maxConsecutiveDays : 0;
 };
 
 /**

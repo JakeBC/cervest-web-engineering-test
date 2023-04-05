@@ -9,12 +9,13 @@ import Paper from '@mui/material/Paper';
 export type Props = {
   header: string[];
   rows: (string|number)[][];
+  name?: string;
 };
 
-const RainfallTable = ({ header, rows }: Props) => {
+const RainfallTable = ({ header, rows, name = 'rainfall data table' }: Props) => {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="rainfall data table">
+      <Table sx={{ minWidth: 650 }} aria-label={name}>
         <TableHead>
           <TableRow>
             { header.map((cell) => <TableCell key={cell}>{cell}</TableCell>) }
