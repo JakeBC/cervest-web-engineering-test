@@ -1,6 +1,6 @@
-import { testData } from '../test/test_data';
+import { testData } from './test_data';
 import { RainfallTableData } from '../types/rainfall';
-import { prepareTableData } from './useRainfallData';
+import { prepareTableData } from '../hooks/useRainfallData';
 
 test('prepareTableData should transform rainfall data correctly', () => {
   /**

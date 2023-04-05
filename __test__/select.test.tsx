@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SelectList, { Props } from './select';
+import SelectList, { Props } from '../components/select';
 
 const createProps = (): Props => ({
   value: 'hello',

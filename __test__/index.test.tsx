@@ -2,8 +2,8 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetch from "jest-fetch-mock";
-import { testData } from '../test/test_data';
-import Home from './index';
+import { testData } from './test_data';
+import Home from '../pages/index';
 
 fetch.enableMocks();
 

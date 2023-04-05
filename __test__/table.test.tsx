@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import RainfallTable, { Props } from './table';
+import RainfallTable, { Props } from '../components/table';
 
 const createProps = (): Props => ({
   header: ['Count', 'Pineapples', 'Bananas', 'Oranges'],
