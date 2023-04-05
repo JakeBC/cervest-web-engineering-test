@@ -10,5 +10,11 @@ export type RainfallItem = {
 
 export type RainfallData = RainfallItem[];
 
-export type RainfallTableData = (string|number)[][];
+export type RainfallTableData = {
+  table: string[][];
+  regions: string[];
+  totalRainfall: number;
+  consecutiveDaysOver10mm: number;
+  count: number;
+};
 
